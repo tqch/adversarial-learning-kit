@@ -1,7 +1,5 @@
 __pycache__
 */__pycache__
-.idea
+.idea/
 */.idea
-datasets
-model_weights
 _test
