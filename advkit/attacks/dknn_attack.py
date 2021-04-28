@@ -312,8 +312,13 @@ class DKNNAttack:
 
 if __name__ == "__main__":
     import os
+<<<<<<< HEAD
     from ..defenses.dknn import DKNN
     from ..convnets.vgg import VGG16
+=======
+    from advkit.defenses.dknn import SimpleDkNN
+    from advkit.convnets.vgg import VGG
+>>>>>>> 9759168 (add simplified DkNN and fix some minor problems)
     from torchvision.datasets import CIFAR10
 
     ROOT = "../datasets"
@@ -328,17 +333,22 @@ if __name__ == "__main__":
         torch.LongTensor(trainset.targets)[:2000]
     )  # for memory's sake, only take 2000 as train set
 
+<<<<<<< HEAD
     model = VGG16()
     model.load_state_dict(torch.load(MODEL_WEIGHTS, map_location=DEVICE))
+=======
+    model = VGG.from_default_config("vgg16")
+    model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=DEVICE))
+>>>>>>> 9759168 (add simplified DkNN and fix some minor problems)
     model.eval()
     model.to(DEVICE)
-    dknn = DKNN(
+    dknn = SimpleDkNN(
         model,
         train_data,
         train_targets,
+        hidden_layers=[3, ],
         device=DEVICE
     )
-
     x, y = (
         torch.FloatTensor(testset.data.transpose(0, 3, 1, 2) / 255.)[:256],
         torch.LongTensor(testset.targets)[:256]
@@ -349,6 +359,7 @@ if __name__ == "__main__":
         train_data,
         train_targets,
         dknn,
+        hidden_layers=[3, ],
         device=DEVICE
     ).generate(x, y)
 

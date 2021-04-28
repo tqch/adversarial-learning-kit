@@ -26,6 +26,9 @@ class VGG(nn.Module):
 
         post_conv_shape = self.input_shape[1] // 2 ** 5, self.input_shape[2] // 2 ** 5
 
+        intermediate_dimension = 1024\
+            if post_conv_shape[0] * post_conv_shape[1] == 1 else 4096
+
         self.final_block = nn.Sequential(
             nn.Flatten(start_dim=1),
             nn.Linear(post_conv_shape[0] * post_conv_shape[1] * 512, 4096),
@@ -81,20 +84,8 @@ if __name__ == "__main__":
 
     ROOT = os.path.expanduser("~/advkit")
     DATA_PATH = os.path.join(ROOT, "datasets")
-<<<<<<< HEAD
-    TRANSFORM = transforms.Compose([
-        transforms.RandomHorizontalFlip(p=0.5),
-        transforms.RandomAffine(degrees=15, translate=(0.125, 0.125), scale=(0.875, 1.125)),
-        transforms.ToTensor()
-    ])
-
-    WEIGHT_PATH = os.path.join(ROOT, "model_weights/cifar_vgg16.pt")
-    TRAIN = not os.path.exists(WEIGHT_PATH)
-=======
-
     WEIGHTS_PATH = os.path.join(ROOT, "model_weights/cifar10_vgg16.pt")
     TRAIN = not os.path.exists(WEIGHTS_PATH)
->>>>>>> 1510795 (add adversarial training)
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     testloader = get_dataloader(dataset="cifar10", root=DATA_PATH)
@@ -121,11 +112,6 @@ if __name__ == "__main__":
         optimizer = SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4, nesterov=True)
         # scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode="max", factor=0.1, patience=5)
         scheduler = lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.1)
-<<<<<<< HEAD
-        best_epoch, best_val_acc = train(model, epochs, train_loader,
-                                         loss_fn, optimizer, scheduler, val_loader, DEVICE)
-
-=======
         best_epoch, best_val_acc = train(
             model,
             epochs,
@@ -136,7 +122,6 @@ if __name__ == "__main__":
             valloader,
             DEVICE
         )
->>>>>>> 1510795 (add adversarial training)
         set_seed(42)
         trainloader = get_dataloader(
             dataset="cifar10",
@@ -149,12 +134,6 @@ if __name__ == "__main__":
         model.to(DEVICE)
         loss_fn = nn.CrossEntropyLoss()
         optimizer = SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4, nesterov=True)
-<<<<<<< HEAD
-        scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
-        train(model, best_epoch, train_loader, loss_fn, optimizer, scheduler, test_loader, DEVICE)
-
-        torch.save(model.state_dict(), WEIGHT_PATH)
-=======
         scheduler = lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.1)
         train(
             model,
@@ -169,4 +148,4 @@ if __name__ == "__main__":
         if not os.path.exists(os.path.dirname(WEIGHTS_PATH)):
             os.makedirs(os.path.dirname(WEIGHTS_PATH))
         torch.save(model.state_dict(), WEIGHTS_PATH)
->>>>>>> 1510795 (add adversarial training)
+

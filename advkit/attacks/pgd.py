@@ -97,18 +97,6 @@ class PGD:
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    from utils.data import get_dataloader
-    from convnets.vgg import VGG16
-
-    ROOT = "../datasets"
-    MODEL_WEIGHTS = "../model_weights/cifar_vgg16.pt"
-    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    testset = get_dataloader(dataset="cifar10", root=ROOT)
-    model = VGG16()
-    model.load_state_dict(torch.load(MODEL_WEIGHTS, map_location=DEVICE))
-=======
     from advkit.utils.data import get_dataloader
     from advkit.convnets.vgg import VGG
     import os
@@ -121,7 +109,6 @@ if __name__ == "__main__":
     testset = get_dataloader(dataset="cifar10", root=DATA_PATH)
     model = VGG.from_default_config("vgg16")
     model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=DEVICE))
->>>>>>> 1510795 (add adversarial training)
     model.eval()
     model.to(DEVICE)
 
@@ -132,3 +119,4 @@ if __name__ == "__main__":
     pred_adv = model(x_adv.to(DEVICE)).max(dim=1)[1].detach()
     acc_adv = (pred_adv == y.to(pred_adv)).float().mean().item()
     print(f"The adversarial accuracy is {acc_adv}")
+
